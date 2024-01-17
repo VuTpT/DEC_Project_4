@@ -1,7 +1,7 @@
 from typing import Any
 import scrapy
 import json
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 from itemloaders import ItemLoader
 from scrapy.loader import ItemLoader
 from ..items import ProductDetailTiki
@@ -18,7 +18,11 @@ collection = client['menuTiki']
 def insertProductDetail(productDetail):
     productList = collection['productDetail1']
     # inserted = productList.insert_one(dict(productDetail))
-    inserted = productList.insert_many(productDetail)
+    try:
+        inserted = productList.insert_many(productDetail)
+    except errors.BulkWriteError as e:
+        for error in e.details["writeErrors"]:
+            print(f"Error: {error}")
     return inserted
 
 class ProductdetailSpider(scrapy.Spider):

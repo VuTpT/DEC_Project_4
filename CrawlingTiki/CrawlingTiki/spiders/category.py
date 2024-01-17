@@ -1,7 +1,9 @@
 import scrapy
 import urllib.parse
 import json
-from pymongo import MongoClient
+
+from pymongo import MongoClient, errors
+
 from itemloaders import ItemLoader
 from scrapy.loader import ItemLoader
 from ..items import CategorySubTiki
@@ -16,17 +18,14 @@ collection = client['menuTiki']
 
 
 # Storing data into a database
-# def insertCategory(categoryParentId, urlKeyParent, subCategoryId, subCategoryName, urlKey, urlPath, totalItem, lastPage, numOfLastPage, isCheck):
-        
-#     categories = collection['category']
-    
-#     category = {'categoryParentId': categoryParentId, 'urlKeyParent': urlKeyParent, 'subCategoryId': subCategoryId, 'subCategoryName': subCategoryName, 'urlKey': urlKey, 'urlPath': urlPath,
-#                    'totalItem': totalItem, 'lastPage': lastPage, 'numOfLastPage': numOfLastPage, 'isCheck': isCheck}
-    
-
 def insertCategory(documents):
         categories = collection['category1']
-        inserted = categories.insert_many(documents)
+        
+        try:
+            inserted = categories.insert_many(documents)
+        except errors.BulkWriteError as e:
+            for error in e.details["writeErrors"]:
+                print(f"Error: {error}")
     
         return inserted
 

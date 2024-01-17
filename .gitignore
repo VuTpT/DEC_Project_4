@@ -1,5 +1,6 @@
 venv
 runner.py
+key.txt
 CrawlingTiki/CrawlingTiki/__pycache__
 CrawlingTiki/CrawlingTiki/spiders/__pycache__
 CrawlingTiki/CrawlingTiki/spiders/__init__.py

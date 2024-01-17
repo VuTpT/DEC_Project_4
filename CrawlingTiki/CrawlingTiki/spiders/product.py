@@ -2,7 +2,8 @@ import scrapy
 import json
 import datetime
 
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
+
 from itemloaders import ItemLoader
 from scrapy.loader import ItemLoader
 from ..items import ProductTiki
@@ -18,8 +19,12 @@ collection = client['menuTiki']
 # Storing data into a database
 def insertProduct(documents):
         products = collection['products5']
-        inserted = products.insert_many(documents)
-        # inserted = products.insert_one(dict(documents))
+        try:
+            inserted = products.insert_many(documents)
+        except errors.BulkWriteError as e:
+            for error in e.details["writeErrors"]:
+                print(f"Error: {error}")
+        
         return inserted
 
 class ProductSpider(scrapy.Spider):
